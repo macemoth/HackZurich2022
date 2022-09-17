@@ -6,7 +6,7 @@
     <!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"> -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <title>Search</title>
+    <title>zipdoc Search</title>
 
   </head>
   <body>
@@ -39,14 +39,15 @@
     <div class="row">
       <div class="col-sm p-1">
         <h2>Summary</h2>
-        Lauren et al report that .ohohg. Ljjgfd
+        {% for hit in res['hits'] %}
+        <a style="text-decoration:none; color:black" href="https://pubmed.ncbi.nlm.nih.gov/{{ hit[0] }}">{{ hit[4] }}</a>
+        {% endfor %}
       </div>
       <div class="col-sm p-1">
         <h2>Related search terms</h2>
-        <button type="button" class="btn btn-secondary">apostolic</button>
-        <button type="button" class="btn btn-secondary">diabetes</button>
-        <button type="button" class="btn btn-secondary">long-covid</button>
- 
+        {% for similar in res['similars'] %}
+        <button type="button" class="btn btn-secondary">{{similar}}</button>
+      {% endfor %}
       </div>
   </div>
 
@@ -56,22 +57,28 @@
       <tr>
         <th>Title</th>
         <th>Authors</th>
-        <th>Date</th>
         <th>Abstract</th>
       </tr>
     </thead>
 
-    <tbody>
+    <!-- <tbody>
       <tr>
         <th scope="row">Zur Elektrodynamik bewegter Körper</th>
           <td>A. Einstein</td>
           <td>01.01.1926</td>
           <td>Below we display the highest-scoring subjects in the cluster at three levels of granularity, with level 0 being least granular. The value after the subject is the average strength of association for papers in the cluster to that subject, with 0 meaning no association and 1 meaning strong association.</td>
       </tr>
-    </tbody>
-    
-  </table>
+    </tbody> -->
 
+    {% for hit in res['hits'] %}
+    <tbody>
+      <tr>
+        <th scope="row"><a href="https://pubmed.ncbi.nlm.nih.gov/{{ hit[0] }}">{{ hit[0] }}</a></th>
+          <td>{{ hit[2] }}</td>
+          <td>{{ hit[3] }}</td>
+      </tr>
+    </tbody>
+    {% endfor %}
   </table>
 
         <footer class="footer">

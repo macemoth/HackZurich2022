@@ -19,10 +19,11 @@ def index():
 
 @server.route('/search/results', methods=['GET', 'POST'])
 def search_request():
-    search_term = request.form["input"]
-    return render_template('results.html')
-    # return render_template('results.html', res=res )
-
-@server.route('/suggestions/<prefix>')
-def get_suggestions(prefix):
-    return jsonify(search.get_suggestions(prefix))
+    search_query = request.form["input"]
+    if len(search_query.split(" ")) == 0:
+        return index()
+    
+    hits, similars = search.search(search_query)
+    response = {"hits": hits, "similars": similars}
+    # return render_template('results.html')
+    return render_template('results.html', res=response)

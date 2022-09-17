@@ -5,6 +5,7 @@ import pickle
 from gensim.test.utils import common_texts, simple_preprocess
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from gensim.parsing.preprocessing import remove_stopwords, preprocess_string
+from summarizer import Summarizer
 
 data_folder = "data/"
 
@@ -14,6 +15,8 @@ def main():
     embed(corpus)
 
 def import_xml_docs(serialise=True):
+    # This is a hack, we'd better make embed a class and let the Summarizer live as a class variable
+    summarizer = Summarizer()
     documents = []
     len_overall = 0
 
@@ -30,8 +33,8 @@ def import_xml_docs(serialise=True):
         root = tree.getroot()
         len_overall += len(root)
         for sec in root:
-            # if len(documents) > 1000:
-            #     break
+            if len(documents) > 20:
+                break
             title = sec.find(".//ArticleTitle")
             if title == None:
                 continue
@@ -50,8 +53,10 @@ def import_xml_docs(serialise=True):
                 
             if text.text == None:
                 continue
-                
-            documents.append((pmid, title, authors, text.text))
+
+            summary = summarizer.summarize(text.text)
+            
+            documents.append((pmid, title, authors, text.text, summary))
     
     print(f"Finished import. Using {len(documents)} of total {len_overall} documents")
     
@@ -72,7 +77,7 @@ def preprocess(documents, tokens_only=False):
             # For training data, add tags
             yield TaggedDocument(tokens, [i])
 
-def embed(corpus, vector_size=800, window=20, dm=1, min_count=2, epochs=10, workers=1, serialise=True):
+def embed(corpus, vector_size=68, window=5, dm=1, min_count=2, epochs=10, serialise=True):
     print("Embedding documents")
     model = Doc2Vec(vector_size=vector_size, window=window, dm=1, min_count=min_count, epochs=epochs, workers=workers)
     model.build_vocab(corpus)

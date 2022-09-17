@@ -12,7 +12,7 @@ class Evaluator():
         self.model = Doc2Vec.load(model_file)
         with open(documents_file, "rb") as file:
             self.documents = pickle.load(file)
-        print(len(self.documents))
+        print(f"{len(self.documents)} files imported by Evaluator")
 
     def most_similar(self, text, n=2):
         processed_query = simple_preprocess(text)
