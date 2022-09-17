@@ -72,9 +72,10 @@ def preprocess(documents, tokens_only=False):
             # For training data, add tags
             yield TaggedDocument(tokens, [i])
 
-def embed(corpus, vector_size=800, window=20, dm=1, min_count=2, epochs=10, workers=1, serialise=True):
+def embed(corpus, vector_size=68, window=5, dm=2, min_count=1, epochs=200, workers=10, serialise=True, dbow_words=1, sample=0, hs=0):
     print("Embedding documents")
-    model = Doc2Vec(vector_size=vector_size, window=window, dm=1, min_count=min_count, epochs=epochs, workers=workers)
+    model = Doc2Vec(dm=dm, vector_size=vector_size, window=window, hs=hs, min_count=min_count,
+                    epochs=epochs, dbow_words=dbow_words, sample=sample, workers=workers)
     model.build_vocab(corpus)
     model.train(corpus, total_examples=model.corpus_count, epochs=model.epochs)
     print("Embedding documents done")
