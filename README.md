@@ -1,17 +1,13 @@
 # HackZurich2022
 
+**zipdoc**
+
 ## Installation
 
 *TODO:* Download, preprocessing and embedding of publication data
 
 1. Run `pip3 -r requirements.txt``
-2. Download Google's Pegasus file from [here](https://console.cloud.google.com/storage/browser/pegasus_ckpt/pubmed?pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&prefix=&forceOnObjectsSortingFiltering=false)
-3. Import the pretrained Pegasus model using
-
-```bash
-python pegasus/flax/main.py \
-    --config pegasus/flax/configs/examples/summscreen_eval.py \
-    --workdir path/to/fine_tuning_output
-```
-
+2. Download PubMed XML files from this [URL](https://www.nlm.nih.gov/databases/download/pubmed_medline.html) and place them into `embedding/data`
+3. `cd` into `embedding` and run `python3 embedding.py`. The embedding along with the documents are serialized
 4. `cd` into `frontend` and run HTTP endpoint using `flask -A server run`
+5. Access zipdoc as [http://127.0.0.1:5000](http://127.0.0.1:5000)
