@@ -1,6 +1,7 @@
 # Data
 *.xml
 *.bin
+embedding/data
 
 # Mac
 .DS_Store

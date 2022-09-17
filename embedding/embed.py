@@ -32,11 +32,26 @@ def import_xml_docs(serialise=True):
         for sec in root:
             # if len(documents) > 1000:
             #     break
+            title = sec.find(".//ArticleTitle")
+            if title == None:
+                continue
+
+            if title.text == None:
+                continue
+
+            title = title.text.replace("[", "").replace("]", "")
+
+            pmid = sec.find(".//PMID").text
+            authors = extractAuthors(sec.findall(".//Author"))
+
             text = sec.find(".//AbstractText")
-            if text != None:
-                if text.text != None:
-                    if len(text.text) > 5:
-                        documents.append(text.text)
+            if text == None:
+                continue
+                
+            if text.text == None:
+                continue
+                
+            documents.append((pmid, title, authors, text.text))
     
     print(f"Finished import. Using {len(documents)} of total {len_overall} documents")
     
@@ -50,14 +65,14 @@ def import_xml_docs(serialise=True):
 def preprocess(documents, tokens_only=False):
     print("Preprocessing documents")
     for i, doc in enumerate(documents):
-        tokens = simple_preprocess(doc)
+        tokens = simple_preprocess(doc[3])
         if tokens_only:
             yield tokens
         else:
             # For training data, add tags
             yield TaggedDocument(tokens, [i])
 
-def embed(corpus, vector_size=800, window=20, dm=1, min_count=2, epochs=50, workers=1, serialise=True):
+def embed(corpus, vector_size=800, window=20, dm=1, min_count=2, epochs=10, workers=1, serialise=True):
     print("Embedding documents")
     model = Doc2Vec(vector_size=vector_size, window=window, dm=1, min_count=min_count, epochs=epochs, workers=workers)
     model.build_vocab(corpus)
@@ -65,7 +80,29 @@ def embed(corpus, vector_size=800, window=20, dm=1, min_count=2, epochs=50, work
     print("Embedding documents done")
     if serialise:
         model.save(data_folder + "embedding.bin")
+        print(f"Serialised documents to {data_folder}/embedding.bin")
 
+def extractAuthors(authorElement):
+    if authorElement == None:
+        return " "
+    
+    if len(authorElement) == 0:
+        return " "
+    
+    authorNames = []
+    for author in authorElement:
+        initials = author.find(".//Initials")
+        lastName = author.find(".//LastName")
+        if author == None or initials == None or lastName == None:
+            authorName = ""
+            continue
+
+        authorName = initials.text
+        authorName += ". "
+        authorName += lastName.text
+        authorNames.append(authorName)
+        authorNames.append(", ")
+    return "".join(authorNames[:-1])
 
 if __name__ == "__main__":
     main()
