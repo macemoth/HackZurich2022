@@ -39,8 +39,8 @@
     <div class="row">
       <div class="col-sm p-1">
         <h2>Summary</h2>
-        {% for hit in res['hits'] %}
-        <a style="text-decoration:none; color:black" href="https://pubmed.ncbi.nlm.nih.gov/{{ hit[0] }}">{{ hit[4] }}</a>
+        {% for summary in res['summaries'] %}
+        <a style="color:black" href="{{ summary[0] }}">{{ summary[1] }}</a>
         {% endfor %}
       </div>
       <div class="col-sm p-1">
@@ -73,7 +73,7 @@
     {% for hit in res['hits'] %}
     <tbody>
       <tr>
-        <th scope="row"><a href="https://pubmed.ncbi.nlm.nih.gov/{{ hit[0] }}">{{ hit[0] }}</a></th>
+        <th scope="row"><a href="https://pubmed.ncbi.nlm.nih.gov/{{ hit[0] }}">{{ hit[1] }}</a></th>
           <td>{{ hit[2] }}</td>
           <td>{{ hit[3] }}</td>
       </tr>

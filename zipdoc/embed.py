@@ -5,7 +5,6 @@ import pickle
 from gensim.test.utils import common_texts, simple_preprocess
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 from gensim.parsing.preprocessing import remove_stopwords, preprocess_string
-from summarizer import Summarizer
 
 data_folder = "data/"
 
@@ -15,8 +14,6 @@ def main():
     embed(corpus)
 
 def import_xml_docs(serialise=True):
-    # This is a hack, we'd better make embed a class and let the Summarizer live as a class variable
-    summarizer = Summarizer()
     documents = []
     len_overall = 0
 
@@ -33,7 +30,7 @@ def import_xml_docs(serialise=True):
         root = tree.getroot()
         len_overall += len(root)
         for sec in root:
-            if len(documents) > 20:
+            if len(documents) > 2000:
                 break
             title = sec.find(".//ArticleTitle")
             if title == None:
@@ -54,9 +51,10 @@ def import_xml_docs(serialise=True):
             if text.text == None:
                 continue
 
-            summary = summarizer.summarize(text.text)
+            if len(text.text) < 500:
+                continue
             
-            documents.append((pmid, title, authors, text.text, summary))
+            documents.append((pmid, title, authors, text.text))
     
     print(f"Finished import. Using {len(documents)} of total {len_overall} documents")
     
@@ -86,7 +84,7 @@ def embed(corpus, vector_size=68, window=5, dm=2, min_count=1, epochs=200, worke
     print("Embedding documents done")
     if serialise:
         model.save(data_folder + "embedding.bin")
-        print(f"Serialised documents to {data_folder}/embedding.bin")
+        print(f"Serialised documents to {data_folder}embedding.bin")
 
 def extractAuthors(authorElement):
     if authorElement == None:

@@ -23,7 +23,7 @@ def search_request():
     if len(search_query.split(" ")) == 0:
         return index()
     
-    hits, similars = search.search(search_query)
-    response = {"hits": hits, "similars": similars}
+    hits, summaries, similars = search.search(search_query)
+    response = {"hits": hits, "summaries": summaries, "similars": similars}
     # return render_template('results.html')
     return render_template('results.html', res=response)

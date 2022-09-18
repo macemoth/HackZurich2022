@@ -14,7 +14,7 @@ class Evaluator():
             self.documents = pickle.load(file)
         print(f"{len(self.documents)} files imported by Evaluator")
 
-    def most_similar(self, text, n=2):
+    def most_similar(self, text, n):
         processed_query = simple_preprocess(text)
         v1 = self.model.infer_vector(processed_query)
         similar_doc = self.model.dv.most_similar([v1], topn=n)
@@ -30,6 +30,15 @@ class Evaluator():
         v1 = self.model.infer_vector(processed_query)
         similar_doc = self.model.docvecs.most_similar([v1])
         return similar_doc
+
+    def get_similars(self, text, n):
+        processed_query = simple_preprocess(text)
+        docvec = self.model.infer_vector(processed_query)
+        similar = self.model.wv.most_similar(positive=[docvec], topn=n)
+        similar_terms = []
+        for s in similar:
+            similar_terms.append(s[0])
+        return similar_terms
 
 if __name__ == "__main__":
     evaluator = Evaluator()
